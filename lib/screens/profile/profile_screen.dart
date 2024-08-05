@@ -38,7 +38,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       fontSize: 18.0,
                       fontWeight: FontWeight.bold
                     ),),
-                    Text('NIP', textAlign: TextAlign.center, style: TextStyle(
+                    Text('NIP : 098678777', textAlign: TextAlign.center, style: TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.bold
                     ),),

@@ -1,5 +1,8 @@
+import 'package:employee_monitor/screens/login/login_controller.dart';
 import 'package:employee_monitor/utils/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -10,6 +13,10 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool obsecureText = true;
+  final LoginController loginController = Get.put(LoginController());
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,6 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Text('Username'),
                 SizedBox(height: 8.0),
                 TextField(
+                  controller: usernameController,
                   decoration: InputDecoration(
                     hintText: 'Masukkan username',
                     border: OutlineInputBorder(
@@ -42,6 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Text('Password'),
                 SizedBox(height: 8.0),
                 TextField(
+                  controller: passwordController,
                   obscureText: obsecureText,
                   decoration: InputDecoration(
                     hintText: 'Masukkan password',
@@ -64,23 +73,68 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 SizedBox(height: 32.0),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: CustomColor.red,
-                    shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                Obx((){
+                  return loginController.isLoading.value ? Center(child: CircularProgressIndicator(),) : ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: CustomColor.red,
+                      shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      ),
+                      minimumSize: Size(double.infinity, 48),
                     ),
-                    minimumSize: Size(double.infinity, 48),
+                    onPressed: () async {
+                            try {
+                              final login = await loginController.login(
+                                  usernameController.text,
+                                  passwordController.text);
+                              if (login.message == 'success') {
+                                Navigator.pushReplacementNamed(context, '/home');
+                              }
+                            } catch (e) {
+                              print('error: $e');
+                              Alert(
+                                context: context,
+                                type: AlertType.error,
+                                title: "Login Gagal",
+                                buttons: [
+                                  DialogButton(
+                                    child: Text(
+                                      "OK",
+                                      style: TextStyle(color: Colors.white, fontSize: 20),
+                                    ),
+                                    onPressed: () => Navigator.pop(context),
+                                    width: 120,
+                                  )
+                                ]
+                              ).show();
+                            }
+                          },
+                    child: Text(
+                    'Masuk',
+                    style: TextStyle(
+                      color: Colors.white
+                    ),
                   ),
-                  onPressed: () {
-                    Navigator.pushReplacementNamed(context, '/home');
-                  },
-                  child: Text(
-                  'Masuk',
-                  style: TextStyle(
-                    color: Colors.white
-                  ),
-                ))
+                  );
+                  
+                }),
+                // ElevatedButton(
+                //   style: ElevatedButton.styleFrom(
+                //     backgroundColor: CustomColor.red,
+                //     shape: RoundedRectangleBorder(
+                //     borderRadius: BorderRadius.circular(12),
+                //     ),
+                //     minimumSize: Size(double.infinity, 48),
+                //   ),
+                //   onPressed: () {
+                //     Navigator.pushReplacementNamed(context, '/home');
+                //   },
+                //   child: Text(
+                //   'Masuk',
+                //   style: TextStyle(
+                //     color: Colors.white
+                //   ),
+                // ))
               ],
             ),
           ),

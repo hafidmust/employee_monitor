@@ -50,8 +50,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.pushNamed(context, '/add_laporan');
                 }),
                 SizedBox(width: 32.0,),
-                CircleIconButton(icon: Icons.add_task, text: "Tugas", color: Colors.red, onPressed: (){}),
-
+                CircleIconButton(icon: Icons.add_task, text: "Tugas", color: Colors.red, onPressed: (){
+                  Navigator.pushNamed(context, '/add_tugas');
+                }),
+                SizedBox(width: 32.0,),
+                CircleIconButton(icon: Icons.format_list_bulleted, text: "List Report", color: Colors.red, onPressed: (){
+                  Navigator.pushNamed(context, '/list_validation');
+                }),
               ],
             )
           ],
