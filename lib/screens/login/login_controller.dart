@@ -1,5 +1,6 @@
 import 'package:employee_monitor/models/login.dart';
 import 'package:employee_monitor/services/api_services.dart';
+import 'package:employee_monitor/utils/secure_storage.dart';
 import 'package:get/get.dart';
 
 class LoginController extends GetxController {
@@ -18,6 +19,7 @@ class LoginController extends GetxController {
       isLoading(true);
       final response = await ApiServices().login(username, password);
       token.value = response.responseData!.token!;
+      SecureStorage().write('token', token.value);
       return response;
     } catch (e) {
       print("from controller: $e");

@@ -5,20 +5,28 @@ import 'package:employee_monitor/screens/home/home_screen.dart';
 import 'package:employee_monitor/screens/login/login_screen.dart';
 import 'package:employee_monitor/screens/validation/detail/detail_validation.dart';
 import 'package:employee_monitor/screens/validation/list/list_validation.dart';
+import 'package:employee_monitor/utils/secure_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 void main() {
   runApp(const MainApp());
 }
 
-class MainApp extends StatelessWidget {
+class MainApp extends StatefulWidget {
   const MainApp({super.key});
 
   @override
+  State<MainApp> createState() => _MainAppState();
+}
+
+class _MainAppState extends State<MainApp> {
+  final readToken = SecureStorage().read('token');
+  @override
   Widget build(BuildContext context) {
     return  MaterialApp(
-      home: LoginScreen(),
-      initialRoute: '/login',
+      home: readToken != null ? AppNavigation() : LoginScreen(),
+      initialRoute: readToken != null ? '/home' : '/login',
       routes: {
         '/login': (context) => LoginScreen(),
         '/home': (context) => AppNavigation(),

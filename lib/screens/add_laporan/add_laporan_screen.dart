@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:employee_monitor/screens/add_laporan/add_laporan_controller.dart';
 import 'package:employee_monitor/widget/custom_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddLaporanScreen extends StatefulWidget {
@@ -12,24 +14,15 @@ class AddLaporanScreen extends StatefulWidget {
 }
 
 class _AddLaporanScreenState extends State<AddLaporanScreen> {
+  final AddLaporanController controller = Get.put(AddLaporanController());
   DateTime? _selectedDate;
-  File? _image;
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController contentController = TextEditingController();
 
-  Future pickImage(ImageSource source) async {
-    try{
-      final image = await ImagePicker().pickImage(source: source);
-      if (image == null) return;
-      final imageTemporary = File(image.path);
-      setState(() {
-        _image = imageTemporary;
-      });
-    }catch(e){
-      print(e);
-    }
-  }
+  
   void _removeImage(){
     setState(() {
-      _image = null;
+      // _image = null;
     });
   }
   @override
@@ -46,13 +39,14 @@ class _AddLaporanScreenState extends State<AddLaporanScreen> {
               SizedBox(height: 24.0),
               Text('Judul :'),
               SizedBox(height: 8.0),
-              CustomTextField(hintText: 'Masukkan laporan'),
+              CustomTextField(hintText: 'Masukkan laporan',controller: titleController,),
               SizedBox(height: 16.0),
               Text('Isi :'),
               SizedBox(height: 8.0),
               CustomTextField(
                 hintText: 'Masukkan isi laporan',
                 maxLines: 5,
+                controller: contentController,
               ),
               SizedBox(height: 16.0),
               Text('Tanggal : '),
@@ -69,7 +63,8 @@ class _AddLaporanScreenState extends State<AddLaporanScreen> {
               SizedBox(height: 16.0),
               Text('Lampiran : '),
               SizedBox(height: 8.0),
-              _image != null? Stack(
+              Obx((){
+                return controller.selectedImage.value != null? Stack(
                     children: [
                       Container(
                         width: 100,
@@ -77,7 +72,7 @@ class _AddLaporanScreenState extends State<AddLaporanScreen> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
                           image: DecorationImage(
-                            image: FileImage(_image!),
+                            image: FileImage(File(controller.selectedImage.value!.path)),
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -88,18 +83,17 @@ class _AddLaporanScreenState extends State<AddLaporanScreen> {
                         child: IconButton(
                           icon: Icon(Icons.close, color: Colors.white),
                           onPressed: (){
-                            _removeImage();
-                          },
-                        ),
+                          controller.removeImage();
+                        },
                       ),
-                    ],
-                  ) :
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: (){
-                      //camera
-                      pickImage(ImageSource.camera);
+                    ),
+                  ],
+                ): Row(
+                  children: [
+                    GestureDetector(
+                      onTap: (){
+                        //camera
+                      controller.pickImage(ImageSource.camera);
                     },
                     child: Container(
                       width: 100,
@@ -116,7 +110,7 @@ class _AddLaporanScreenState extends State<AddLaporanScreen> {
                   GestureDetector(
                     onTap: (){
                       // gallery
-                      pickImage(ImageSource.gallery);
+                      controller.pickImage(ImageSource.gallery);
                     },
                     child: Container(
                       width: 100,
@@ -130,11 +124,15 @@ class _AddLaporanScreenState extends State<AddLaporanScreen> {
                     ),
                   ),
                 ],
-              ),
+              );
+              }),
               SizedBox(height: 16.0),
+    
               Row(
                 children: [
-                  ElevatedButton(onPressed: (){}, child: Text('Simpan')),
+                  ElevatedButton(onPressed: (){
+                    controller.addLaporan(titleController.text, contentController.text, _selectedDate.toString());
+                  }, child: Text('Simpan')),
                   SizedBox(width: 8.0),
                   ElevatedButton(onPressed: (){}, child: Text('Reset')),
                 ],
