@@ -2,11 +2,12 @@ import 'dart:io';
 
 import 'package:dio/dio.dart' as dio;
 import 'package:employee_monitor/services/api_services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddLaporanController extends GetxController {
-  final token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJoYWZpZG11c3QiLCJpYXQiOjE3MjI4Nzg1MzR9.j6rQzoEhCqyw0Hc4Ji1eBrP03pObr53Hdci9EDs0xC8';
+  final token = Get.find<FlutterSecureStorage>();
   final isLoading = false.obs;
   Rx<XFile?> selectedImage = Rx<XFile?>(null);
   var imageURL = '';
@@ -22,12 +23,12 @@ class AddLaporanController extends GetxController {
       print(e);
     }
   }
-  void addLaporan(String title, String content, String reportDate ) async {
+  Future<bool> addLaporan(String title, String content, String reportDate ) async {
     try {
       isLoading(true);
       if (selectedImage.value == null) {
         Get.snackbar('Failed', 'Please select an image');
-        return;
+        return false;
       }
       var formData = dio.FormData.fromMap({
         'title': title,
@@ -35,13 +36,17 @@ class AddLaporanController extends GetxController {
         'reportDate': reportDate,
         'photo':  await dio.MultipartFile.fromFile(selectedImage.value!.path, filename:selectedImage.value!.path.split('/').last),
       });
-      final response = await ApiServices().addReport(token, formData);
+      final getToken = await token.read(key: 'token');
+      final response = await ApiServices().addReport(getToken!, formData);
       print(response.message);
       if (response.message == 'success'){
         isLoading(false);
+        return true;
       }
+      return false;
     } catch (e) {
       print(e);
+      return false;
     }finally{
       isLoading(false);
     }

@@ -57,7 +57,7 @@ class ApiServices {
   Future<UploadReport> addReport(String token, FormData formData) async {
     try {
       final response = await _dio.post(
-        '${BASE_URL}/api/v1/report',
+        '$BASE_URL/api/v1/report',
         data: formData,
         onSendProgress: (int sent, int total) {
           print('$sent $total');
@@ -102,7 +102,11 @@ class ApiServices {
   Future<TaskAssigned> getTaskAssigned(String token) async {
     TaskAssigned? dataTaskAssigned;
     try {
-      final response = await _dio.get('${BASE_URL}/api/v1/task/assigned');
+      final response = await _dio.get('$BASE_URL/api/v1/task/assigned',
+      options: Options(
+        headers: {'Authorization': 'Bearer $token'},
+      )
+      );
       if (response.statusCode == 200) {
         dataTaskAssigned = TaskAssigned.fromJson(response.data);
         return dataTaskAssigned;
