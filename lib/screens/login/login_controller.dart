@@ -7,6 +7,7 @@ class LoginController extends GetxController {
   var isLoading = false.obs;
   var token = ''.obs;
   var message = ''.obs;
+  final secureStorage = Get.find<SecureStorage>();
 
   @override
   void onInit() {
@@ -19,7 +20,7 @@ class LoginController extends GetxController {
       isLoading(true);
       final response = await ApiServices().login(username, password);
       token.value = response.responseData!.token!;
-      SecureStorage().write('token', token.value);
+      secureStorage.write('token', response.responseData!.token!);
       return response;
     } catch (e) {
       print("from controller: $e");

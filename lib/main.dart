@@ -5,11 +5,13 @@ import 'package:employee_monitor/screens/home/home_screen.dart';
 import 'package:employee_monitor/screens/login/login_screen.dart';
 import 'package:employee_monitor/screens/validation/detail/detail_validation.dart';
 import 'package:employee_monitor/screens/validation/list/list_validation.dart';
+import 'package:employee_monitor/utils/dependency_injection.dart';
 import 'package:employee_monitor/utils/secure_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 void main() {
+  DependencyInjection.init();
   runApp(const MainApp());
 }
 

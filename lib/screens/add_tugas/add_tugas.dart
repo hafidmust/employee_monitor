@@ -1,6 +1,13 @@
+import 'dart:ffi';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:employee_monitor/models/list_staff.dart';
+import 'package:employee_monitor/screens/add_laporan/add_laporan_controller.dart';
+import 'package:employee_monitor/screens/add_tugas/add_tugas_controller.dart';
 import 'package:employee_monitor/widget/custom_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class AddTugasScreen extends StatefulWidget {
   const AddTugasScreen({super.key});
@@ -10,14 +17,26 @@ class AddTugasScreen extends StatefulWidget {
 }
 
 class _AddTugasScreenState extends State<AddTugasScreen> {
+  final AddTugasController controller = Get.put(AddTugasController());
   List<String> items = ['Budi', 'Dewi', 'Rizki'];
-  String? _selectedItem;
+  ResponseData? _selectedItem;
   DateTime? _selectedDate;  
+  TextEditingController descController = TextEditingController();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: (){
+            Navigator.pop(context);
+          },
+        ),
         title: Text('Tambah Tugas'),
+        
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -26,7 +45,11 @@ class _AddTugasScreenState extends State<AddTugasScreen> {
           children: [
             SizedBox(height: 24.0),
             Text('Staff : '),
-            DropdownButtonFormField2(
+            Obx((){
+              if(controller.isLoading.value){
+                return CircularProgressIndicator();
+              }
+              return DropdownButtonFormField2(
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12)
@@ -37,13 +60,22 @@ class _AddTugasScreenState extends State<AddTugasScreen> {
               ),
               hint: Text('Pilih user'),
               isExpanded: true,
-              items: items.map((item)=>DropdownMenuItem<String>(child: Text(item), value: item,)).toList(), onChanged: (value) {
-                setState(() {
-                  _selectedItem = value;
-                });
-              },),
+              value: _selectedItem,
+              items: controller.dataStaff.map((item){
+                return DropdownMenuItem<ResponseData>(
+                  value: item, 
+                  child: Text(item.fullName ?? ''),);
+              }).toList(), 
+              
+              onChanged: (ResponseData? newValue) {
+                    setState(() {
+                      _selectedItem = newValue;
+                    });
+                },
+              );
+            }),
             Text('Deskripsi :'),
-            CustomTextField(hintText: 'Deskripsi'),
+            CustomTextField(hintText: 'Deskripsi', controller: descController,),
             SizedBox(height: 16.0),
             Text('Tanggal :'),
             CustomTextField(
@@ -57,7 +89,20 @@ class _AddTugasScreenState extends State<AddTugasScreen> {
                   ),
                 ),
             SizedBox(height: 16.0),
-            ElevatedButton(onPressed: (){}, child: Text('Simpan'))
+            
+              ElevatedButton(
+                onPressed: ()async{
+                  final req = await controller.addTask(
+                    _selectedItem!.id!,
+                    descController.text,
+                    _selectedDate.toString()
+                  );
+                  if(req){
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Berhasil menambahkan tugas')));
+                    Navigator.pop(context);                 
+                  }
+                }, 
+                child: Text('Tambah Tugas'))
         
           ],
         ),

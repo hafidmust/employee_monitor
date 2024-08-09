@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:employee_monitor/models/create_task.dart';
+import 'package:employee_monitor/models/list_staff.dart';
 import 'package:employee_monitor/models/login.dart';
 import 'package:employee_monitor/models/report.dart';
 import 'package:employee_monitor/models/task_assigned.dart';
@@ -109,6 +111,47 @@ class ApiServices {
       }
     } on DioException catch (e) {
       throw Exception('Get task assigned failed: $e');
+    }
+  }
+
+  Future<ListStaff> getListStaff(String token) async {
+    ListStaff? dataStaff;
+    try {
+      final response = await _dio.get('$BASE_URL/api/v1/user/staff',
+          options: Options(
+            headers: {'Authorization': 'Bearer $token'},
+          ));
+      if (response.statusCode == 200) {
+        dataStaff = ListStaff.fromJson(response.data);
+        return dataStaff;
+      } else {
+        throw Exception('Gagal get list staff: ${response.statusCode}');
+      }
+    } on DioException catch (e) {
+      throw Exception('Get list staff failed: $e');
+    }
+  }
+
+  Future<CreateTask> createTask(String token, int? assignedTo, String desc, String date) async {
+    CreateTask? dataCreateTask;
+    try {
+      final response = await _dio.post('$BASE_URL/api/v1/task',
+      data: {
+        'assignedToId': assignedTo,
+        'description': desc,
+        'dueDate': date,
+      },
+          options: Options(
+            headers: {'Authorization': 'Bearer $token'},
+          ));
+      if (response.statusCode == 201) {
+        dataCreateTask = CreateTask.fromJson(response.data);
+        return dataCreateTask;
+      } else {
+        throw Exception('Gagal create task: ${response.statusCode}');
+      }
+    } on DioException catch (e) {
+      throw Exception('Create task failed: $e');
     }
   }
 }
