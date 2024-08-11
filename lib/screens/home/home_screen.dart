@@ -1,6 +1,8 @@
+import 'package:employee_monitor/screens/home/home_controller.dart';
 import 'package:employee_monitor/widget/circle_icon_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_layout_grid/flutter_layout_grid.dart';
+import 'package:get/get.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -10,6 +12,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final HomeController controller = Get.put(HomeController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,23 +45,29 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             SizedBox(height: 16.0),
-            Text('Menu', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
+            Text('Menu',
+                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
             SizedBox(height: 8.0),
-            Row(
-              children: [
-                CircleIconButton(icon: Icons.note_add, text: "Laporan", color: Colors.red, onPressed: (){
-                  Navigator.pushNamed(context, '/add_laporan');
-                }),
-                SizedBox(width: 32.0,),
-                CircleIconButton(icon: Icons.add_task, text: "Tugas", color: Colors.red, onPressed: (){
-                  Navigator.pushNamed(context, '/add_tugas');
-                }),
-                SizedBox(width: 32.0,),
-                CircleIconButton(icon: Icons.format_list_bulleted, text: "List Report", color: Colors.red, onPressed: (){
-                  Navigator.pushNamed(context, '/list_validation');
-                }),
-              ],
-            )
+            Obx(() {
+              if (controller.isLoading.value) {
+                return Center(child: CircularProgressIndicator());
+              }
+              return Row(
+                children: controller.listMenu.map((item) {
+                  return Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.0),
+                    child: CircleIconButton(
+                      icon: item.icon,
+                      text: item.text,
+                      color: item.color,
+                      onPressed: () {
+                        Navigator.pushNamed(context, item.route);
+                      },
+                    ),
+                  );
+                }).toList(),
+              );
+            })
           ],
         ),
       ),

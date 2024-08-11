@@ -9,6 +9,8 @@ import 'package:employee_monitor/utils/dependency_injection.dart';
 import 'package:employee_monitor/utils/secure_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   DependencyInjection.init();
@@ -26,9 +28,8 @@ class _MainAppState extends State<MainApp> {
   final readToken = SecureStorage().read('token');
   @override
   Widget build(BuildContext context) {
-    return  MaterialApp(
-      home: readToken != null ? AppNavigation() : LoginScreen(),
-      initialRoute: readToken != null ? '/home' : '/login',
+    return  GetMaterialApp(
+      initialRoute: '/login',
       routes: {
         '/login': (context) => LoginScreen(),
         '/home': (context) => AppNavigation(),
@@ -36,6 +37,15 @@ class _MainAppState extends State<MainApp> {
         '/add_tugas': (context) => AddTugasScreen(),
         '/detail_validation': (context) => DetailValidationScreen(),
         '/list_validation': (context) => ListValidationScreen(),
+      },
+      onInit: () async {
+        final prefs = await SharedPreferences.getInstance();
+        final token = prefs.getString('token');
+        if(token != null){
+          Get.offAllNamed('/home');
+        }else{
+          Get.offAllNamed('/login');
+        }
       },
     );
   }

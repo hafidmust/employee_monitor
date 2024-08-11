@@ -1,5 +1,7 @@
+import 'package:employee_monitor/screens/profile/profile_controller.dart';
 import 'package:employee_monitor/utils/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -9,6 +11,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  final ProfileController controller = Get.put(ProfileController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,7 +24,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Card(
+            Obx((){
+              return Card(
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: Column(
@@ -31,14 +35,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     CircleAvatar(
 
                       radius: 80,
-                      backgroundImage: AssetImage('assets/images/profile.png'),
+                      
                     ),
                     SizedBox(height: 16.0),
-                    Text('Nama: John Doe',textAlign: TextAlign.center,style: TextStyle(
+                    Text('Nama: ${controller.data.value.fullName}',textAlign: TextAlign.center,style: TextStyle(
                       fontSize: 18.0,
                       fontWeight: FontWeight.bold
                     ),),
-                    Text('NIP : 098678777', textAlign: TextAlign.center, style: TextStyle(
+                    Text('Role : ${controller.data.value.role}', textAlign: TextAlign.center, style: TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.bold
                     ),),
@@ -47,14 +51,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   
                 ),
               ),
-            ),
+            );
+            }),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: CustomColor.red,
                 elevation: 8,
                 minimumSize: Size(double.infinity, 50)
               ),
-              onPressed: (){}, child: Text('Logout', style: TextStyle(
+              onPressed: ()async{
+                final logout = await controller.deleteToken();
+                if(logout){
+                  
+                  Get.offAllNamed('/login');
+                }
+              }, child: Text('Logout', style: TextStyle(
               color: Colors.white
 
             ),))

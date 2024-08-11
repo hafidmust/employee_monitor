@@ -1,12 +1,13 @@
 import 'package:employee_monitor/models/report.dart';
 import 'package:employee_monitor/services/api_services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 
 class LaporanController extends GetxController {
   var isLoading = false.obs;
   var dataReport = List<ResponseData>.empty().obs;
   var message = ''.obs;
-  final token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJoYWZpZG11c3QiLCJpYXQiOjE3MjI4NzQxODZ9.v-69QOPdaJMKr7IqJMRYYR-bmnEkjD3IbWTv7QLyYkQ';
+  final token = Get.find<FlutterSecureStorage>();
 
   @override
   void onInit() {
@@ -17,7 +18,8 @@ class LaporanController extends GetxController {
   void fetchReport() async {
     try {
       isLoading(true);
-      final response = await ApiServices().getAllReport(token);
+      final getToken = await token.read(key: 'token');	
+      final response = await ApiServices().getAllReport(getToken!);
       print("response from controller : ${response.responseData}");
       dataReport.value = response.responseData!;
     }catch(e){

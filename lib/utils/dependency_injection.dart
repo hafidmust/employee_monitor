@@ -3,6 +3,6 @@ import 'package:get/get.dart';
 
 class DependencyInjection {
   static void init(){
-    Get.put<FlutterSecureStorage>(FlutterSecureStorage());
+    Get.put<FlutterSecureStorage>(const FlutterSecureStorage());
   }
 }
