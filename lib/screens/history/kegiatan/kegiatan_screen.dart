@@ -12,6 +12,8 @@ class KegiatanScreen extends StatefulWidget {
 
 class _KegiatanScreenState extends State<KegiatanScreen> {
   final KegiatanController controller = Get.put(KegiatanController());
+  final GlobalKey<RefreshIndicatorState> _refreshKey =
+      GlobalKey<RefreshIndicatorState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,32 +30,33 @@ class _KegiatanScreenState extends State<KegiatanScreen> {
                 height: 300),
           );
         } else {
-          return ListView.builder(
-              itemCount: controller.listTaskAssigned.length,
-              itemBuilder: (context, index) {
-                final task = controller.listTaskAssigned[index];
-                return Container(
-                  margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey), // Outline border
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  child: ListTile(
-                    title: Text(
-                      task.description!,
+          return RefreshIndicator(
+            key: _refreshKey,
+            onRefresh: () async {
+              controller.fetchTaskAssigned;
+            },
+            child: ListView.builder(
+                itemCount: controller.listTaskAssigned.length,
+                itemBuilder: (context, index) {
+                  final task = controller.listTaskAssigned[index];
+                  return Container(
+                    margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey), // Outline border
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
-                    subtitle: Text(
-                      task.dueDate.toString(),
+                    child: ListTile(
+                      title: Text(
+                        task.description!,
+                      ),
+                      subtitle: Text(
+                        "Assigned by : ${task.assignedBy!.username.toString()}\nDeadline : ${task.dueDate.toString()}",
+                      ),
+                      
                     ),
-                    trailing: IconButton(
-                      icon: Icon(Icons.arrow_forward_ios),
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/detail_validation');
-                      },
-                    ),
-                  ),
-                );
-              });
+                  );
+                }),
+          );
         }
       }),
     );

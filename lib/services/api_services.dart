@@ -1,9 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:employee_monitor/models/create_task.dart';
+import 'package:employee_monitor/models/dashboard_summary.dart';
+import 'package:employee_monitor/models/detail_validation.dart';
 import 'package:employee_monitor/models/list_menu.dart';
 import 'package:employee_monitor/models/list_staff.dart';
 import 'package:employee_monitor/models/login.dart';
 import 'package:employee_monitor/models/report.dart';
+import 'package:employee_monitor/models/signup.dart';
 import 'package:employee_monitor/models/task_assigned.dart';
 import 'package:employee_monitor/models/upload_report.dart';
 import 'package:employee_monitor/models/user.dart';
@@ -16,8 +19,8 @@ class ApiServices {
         // sendTimeout: Duration(seconds: 10),
         ),
   );
-  // final String BASE_URL = 'http://103.196.153.52';
-  final String BASE_URL = 'http://10.0.2.2:8080';
+  final String BASE_URL = 'http://103.196.153.52';
+  // final String BASE_URL = 'http://10.0.2.2:8080';
 
   Future<Login> login(String username, String password) async {
     Login? dataLogin;
@@ -37,6 +40,27 @@ class ApiServices {
     }
   }
 
+  Future<Signup> signup(String fullName,String nip, String username, String password, String jabatan) async {
+    Signup? dataSignup;
+    try {
+      final response = await _dio.post(BASE_URL + '/signup',
+          data: {
+            'fullName': fullName,
+            'nip': nip,
+            'username': username, 
+            'password': password, 
+            'jabatan': jabatan});
+      if (response.statusCode == 201) {
+        dataSignup = Signup.fromJson(response.data);
+        return dataSignup;
+      } else {
+        throw Exception('Gagal signup: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Gagal signup: $e');
+    }
+  }
+
   Future<Report> getAllReport(String token) async {
     Report? dataReport;
     try {
@@ -44,7 +68,26 @@ class ApiServices {
           options: Options(
               headers: {'Authorization': 'Bearer ${token}'},
               receiveDataWhenStatusError: true));
-      if (respones.statusCode == 201) {
+      if (respones.statusCode == 200) {
+        print(respones.data);
+        var data = respones.data;
+        dataReport = Report.fromJson(data);
+        return dataReport;
+      }
+      return Report.fromJson(respones.data);
+    } catch (e) {
+      throw Exception('Get report failed : $e');
+    }
+  }
+
+  Future<Report> getAllReportMe(String token) async {
+    Report? dataReport;
+    try {
+      final respones = await _dio.get('${BASE_URL}/api/v1/report/me',
+          options: Options(
+              headers: {'Authorization': 'Bearer ${token}'},
+              receiveDataWhenStatusError: true));
+      if (respones.statusCode == 200) {
         print(respones.data);
         var data = respones.data;
         dataReport = Report.fromJson(data);
@@ -75,30 +118,6 @@ class ApiServices {
     }
   }
 
-  static Future<dynamic> uploadReport(filePath) async {
-    var token =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJoYWZpZG11c3QiLCJpYXQiOjE3MjI5NjI0ODF9.yZleGd7HCTLVdVRH9JwQoj_pBa_ZXQBD-smREbFfwUw';
-    try {
-      FormData formData = new FormData.fromMap({
-        'title': 'title',
-        'content': 'content',
-        'reportDate': DateTime.now(),
-        'photo': await MultipartFile.fromFile(filePath,
-            filename: filePath.split('/').last),
-      });
-      Response<UploadReport> response =
-          await Dio().post('http://10.0.2.2/api/v1/report',
-              data: formData,
-              options: Options(headers: <String, String>{
-                'Authorization': 'Bearer $token',
-              }));
-      return response;
-    } on DioException catch (e) {
-      return e.response;
-    } catch (e) {
-      return e;
-    }
-  }
 
   Future<TaskAssigned> getTaskAssigned(String token) async {
     TaskAssigned? dataTaskAssigned;
@@ -193,6 +212,93 @@ class ApiServices {
       }
     } on DioException catch (e) {
       throw Exception('Get profile failed: $e');
+    }
+  }
+
+  Future<DetailValidation> getDetailValidation(String token, String id) async {
+    DetailValidation? detailValidation;
+    try {
+      final response = await _dio.get('$BASE_URL/api/v1/report/$id',
+          options: Options(
+            headers: {'Authorization': 'Bearer $token'},
+          ));
+      if (response.statusCode == 200) {
+        detailValidation = DetailValidation.fromJson(response.data);
+        return detailValidation;
+      } else {
+        throw Exception('Gagal get detail validation: ${response.statusCode}');
+      }
+    } on DioException catch (e) {
+      throw Exception('Get detail validation failed: $e');
+    }
+  }
+  Future<DetailValidation> validationAccept(String token, String id) async {
+    DetailValidation? detailValidation;
+    try {
+      final response = await _dio.put('$BASE_URL/api/v1/report/$id/acc',
+          options: Options(
+            headers: {'Authorization': 'Bearer $token'},
+          ));
+      if (response.statusCode == 200) {
+        detailValidation = DetailValidation.fromJson(response.data);
+        return detailValidation;
+      } else {
+        throw Exception('Gagal get update acc validation: ${response.statusCode}');
+      }
+    } on DioException catch (e) {
+      throw Exception('Get detail validation failed: $e');
+    }
+  }
+  Future<DetailValidation> validationReject(String token, String id) async {
+    DetailValidation? detailValidation;
+    try {
+      final response = await _dio.put('$BASE_URL/api/v1/report/$id/reject',
+          options: Options(
+            headers: {'Authorization': 'Bearer $token'},
+          ));
+      if (response.statusCode == 200) {
+        detailValidation = DetailValidation.fromJson(response.data);
+        return detailValidation;
+      } else {
+        throw Exception('Gagal put reject validation: ${response.statusCode}');
+      }
+    } on DioException catch (e) {
+      throw Exception('Get detail validation failed: $e');
+    }
+  }
+  Future<DashboardSummary> getDashboardSummary(String token) async {
+    DashboardSummary? dashboardSummary;
+    try {
+      final response = await _dio.get('$BASE_URL/api/v1/reports/summary',
+          options: Options(
+            headers: {'Authorization': 'Bearer $token'},
+          ));
+      if (response.statusCode == 200) {
+        dashboardSummary = DashboardSummary.fromJson(response.data);
+        return dashboardSummary;
+      } else {
+        throw Exception('Gagal get dashboard summary: ${response.statusCode}');
+      }
+    } on DioException catch (e) {
+      throw Exception('Get dashboard summary failed: $e');
+    }
+  }
+
+  Future<Report> getReportPerStatus(String token, String status) async {
+    Report? dataReport;
+    try {
+      final response = await _dio.get('$BASE_URL/api/v1/reports/$status',
+          options: Options(
+            headers: {'Authorization': 'Bearer $token'},
+          ));
+      if (response.statusCode == 200) {
+        dataReport = Report.fromJson(response.data);
+        return dataReport;
+      } else {
+        throw Exception('Gagal get report per status: ${response.statusCode}');
+      }
+    } on DioException catch (e) {
+      throw Exception('Get report per status failed: $e');
     }
   }
 }

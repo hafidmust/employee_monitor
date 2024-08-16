@@ -5,9 +5,10 @@ import 'package:employee_monitor/services/api_services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AddLaporanController extends GetxController {
-  final token = Get.find<FlutterSecureStorage>();
+  
   final isLoading = false.obs;
   Rx<XFile?> selectedImage = Rx<XFile?>(null);
   var imageURL = '';
@@ -24,6 +25,7 @@ class AddLaporanController extends GetxController {
     }
   }
   Future<bool> addLaporan(String title, String content, String reportDate ) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     try {
       isLoading(true);
       if (selectedImage.value == null) {
@@ -36,7 +38,7 @@ class AddLaporanController extends GetxController {
         'reportDate': reportDate,
         'photo':  await dio.MultipartFile.fromFile(selectedImage.value!.path, filename:selectedImage.value!.path.split('/').last),
       });
-      final getToken = await token.read(key: 'token');
+      final getToken = prefs.getString('token');
       final response = await ApiServices().addReport(getToken!, formData);
       print(response.message);
       if (response.message == 'success'){
@@ -48,23 +50,6 @@ class AddLaporanController extends GetxController {
       print(e);
       return false;
     }finally{
-      isLoading(false);
-    }
-  }
-
-  void uploadReport(ImageSource imageSource) async {
-    try {
-      final pickedImage = await ImagePicker().pickImage(source: imageSource);
-      isLoading(true);
-      if (pickedImage != null) {
-        var response = await ApiServices.uploadReport(pickedImage.path);
-        if (response.statusCode == 201) {
-          Get.snackbar('Success', 'image successfully uploaded');
-        }
-      } else {
-        Get.snackbar('Failed', 'image failed to upload');
-      }
-    } finally {
       isLoading(false);
     }
   }

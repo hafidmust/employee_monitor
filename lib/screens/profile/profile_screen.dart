@@ -16,60 +16,73 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Profile'),
+        backgroundColor: CustomColor.red,
+
+        title: Text('Profile', style: TextStyle(
+          color: Colors.white
+        ),),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Obx((){
-              return Card(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  
-                  children: [
-                    CircleAvatar(
-
-                      radius: 80,
-                      
-                    ),
-                    SizedBox(height: 16.0),
-                    Text('Nama: ${controller.data.value.fullName}',textAlign: TextAlign.center,style: TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold
-                    ),),
-                    Text('Role : ${controller.data.value.role}', textAlign: TextAlign.center, style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold
-                    ),),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Obx((){
+                return Card(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     
-                  ],
-                  
+                    children: [
+                      CircleAvatar(
+                        child: Image.network('https://avatar.iran.liara.run/public'),
+                        radius: 80,
+                        
+                      ),
+                      SizedBox(height: 16.0),
+                      Text('${controller.data.value.fullName}',textAlign: TextAlign.center,style: TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold
+                      ),),
+                      Text('Jabatan : ${controller.data.value.position ?? '-'}', textAlign: TextAlign.center, style: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.bold
+                      ),
+                      ),
+                      SizedBox(height: 8.0),
+                      Text('${controller.data.value.role}', textAlign: TextAlign.center, style: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.bold
+                      ),
+                      ),
+                      
+                    ],
+                    
+                  ),
                 ),
-              ),
-            );
-            }),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: CustomColor.red,
-                elevation: 8,
-                minimumSize: Size(double.infinity, 50)
-              ),
-              onPressed: ()async{
-                final logout = await controller.deleteToken();
-                if(logout){
-                  
-                  Get.offAllNamed('/login');
-                }
-              }, child: Text('Logout', style: TextStyle(
-              color: Colors.white
-
-            ),))
-          ],
+              );
+              }),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: CustomColor.red,
+                  elevation: 8,
+                  minimumSize: Size(double.infinity, 50)
+                ),
+                onPressed: ()async{
+                  final logout = await controller.deleteToken();
+                  if(logout){
+                    Get.deleteAll();
+                    Get.offAllNamed('/login');
+                  }
+                }, child: Text('Logout', style: TextStyle(
+                color: Colors.white
+          
+              ),))
+            ],
+          ),
         ),
       ),
     );

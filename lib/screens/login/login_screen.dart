@@ -88,7 +88,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                   usernameController.text,
                                   passwordController.text);
                               if (login.message == 'success') {
-                                Navigator.pushReplacementNamed(context, '/home');
+                                // Navigator.pushReplacementNamed(context, '/home');
+                                Get.offAllNamed('/home');
                               }
                             } catch (e) {
                               print('error: $e');
@@ -118,6 +119,19 @@ class _LoginScreenState extends State<LoginScreen> {
                   );
                   
                 }),
+                // GestureDetector(
+                //   onTap: (){
+                //     Get.toNamed('/register');
+                //   },
+                //   child: Container(
+                //     margin: EdgeInsets.only(top: 16.0),
+                //     child: Text('Belum punya akun? Daftar disini', style: TextStyle(
+                //       color: CustomColor.red,
+                //     ),
+                //     textAlign: TextAlign.center,
+                //     ),
+                //   ),
+                // )
                 // ElevatedButton(
                 //   style: ElevatedButton.styleFrom(
                 //     backgroundColor: CustomColor.red,

@@ -9,7 +9,7 @@ class LoginController extends GetxController {
   var isLoading = false.obs;
   var token = ''.obs;
   var message = ''.obs;
-  final saveToken = Get.find<FlutterSecureStorage>();
+  // final saveToken = Get.find<FlutterSecureStorage>();
 
   @override
   void onInit() {

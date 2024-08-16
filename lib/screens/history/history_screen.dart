@@ -29,10 +29,14 @@ class _HistoryScreenState extends State<HistoryScreen> with SingleTickerProvider
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('History'),
+        backgroundColor: CustomColor.red,
+        title: Text('History', style: TextStyle(
+          color: Colors.white
+        ),),
         bottom: TabBar(
-          indicatorColor: CustomColor.red,
-          labelColor: CustomColor.red,
+          indicatorColor: Colors.white,
+          labelColor: Colors.white,
+          unselectedLabelColor: Colors.grey,
           controller: _tabController,
           tabs: [
             Tab(text: 'Laporan',),

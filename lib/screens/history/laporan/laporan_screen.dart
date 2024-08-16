@@ -2,6 +2,7 @@ import 'package:employee_monitor/screens/history/laporan/laporan_controller.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 
 class LaporanScreen extends StatefulWidget {
@@ -13,6 +14,8 @@ class LaporanScreen extends StatefulWidget {
 
 class _LaporanScreenState extends State<LaporanScreen> {
   final LaporanController controller = Get.put(LaporanController());
+  final GlobalKey<RefreshIndicatorState> _refreshKey = GlobalKey<RefreshIndicatorState>();
+  
 
   @override
   Widget build(BuildContext context) {
@@ -28,33 +31,35 @@ class _LaporanScreenState extends State<LaporanScreen> {
       );
 
       }else{
-        return ListView.builder(
-        itemCount: controller.dataReport.length,
-        itemBuilder: (context, index){
-          final report = controller.dataReport[index];
-          return Container(
-            margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey), // Outline border
-              borderRadius: BorderRadius.circular(10.0), 
-            ),
-            child: ListTile(
-              
-              title: Text(
-                report.title!,
+        return RefreshIndicator(
+          key: _refreshKey,
+          onRefresh: ()async {
+            controller.fetchReport;
+          },
+          child: ListView.builder(
+          itemCount: controller.dataReport.length,
+          itemBuilder: (context, index){
+            final report = controller.dataReport[index];
+            return Container(
+              margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey), // Outline border
+                borderRadius: BorderRadius.circular(10.0), 
               ),
-              subtitle: Text(
-                report.content!,
+              child: ListTile(
+                title: Text(
+                  "Nama: ${report.title}",
+                ),
+                subtitle: Text(
+                  "Desc : ${report.content}\nReported at: ${
+                    report.reportDate
+                  }",
+                ),
+                
               ),
-              trailing: IconButton(
-                icon: Icon(Icons.arrow_forward_ios),
-                onPressed: (){
-                  Navigator.pushNamed(context, '/detail_validation');
-                },
-              ),
-            ),
-          );
-      });
+            );
+                }),
+        );
       }})
     );
   }

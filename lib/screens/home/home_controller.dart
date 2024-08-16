@@ -1,41 +1,85 @@
+import 'package:employee_monitor/models/dashboard_summary.dart';
+import 'package:employee_monitor/models/report.dart';
 import 'package:employee_monitor/services/api_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeController extends GetxController {
   var isLoading = false.obs;
-  final token = Get.find<FlutterSecureStorage>();
+
   var listMenu = <MenuItem>[].obs;
+  var dataSummary = ResponseDataDashboard().obs;
+  var listReport = <ResponseData>[].obs;
 
   @override
   void onInit() {
     super.onInit();
     fetchListMenu();
+    fetchSummary();
   }
 
-  Future<bool>fetchListMenu() async {
+  Future<void> fetchListMenu() async {
+    final SharedPreferences token = await SharedPreferences.getInstance();
     try {
-      final getToken = await token.read(key: 'token');
+      final getToken = token.getString('token');
       isLoading(true);
       final response = await ApiServices().getListMenu(getToken!);
       print("response ctrl : $response");
-      
-        print("response from controller : ${response.responseData}");
-        
-        listMenu.value = (response.responseData!).map((item)=> MenuItem.fromJson(
-          item.toJson()
-        )).toList();
-        return true;
+
+      print("response from controller : ${response.responseData}");
+
+      listMenu.value = (response.responseData!)
+          .map((item) => MenuItem.fromJson(item.toJson()))
+          .toList();
     } catch (e) {
       print('Error: $e');
-      return false;
     } finally {
       isLoading(false);
     }
   }
-}
+    Future<void> fetchSummary() async {
+      final SharedPreferences token = await SharedPreferences.getInstance();
+      try {
+        final getToken = token.getString('token');
+        isLoading(true);
+        final response = await ApiServices().getDashboardSummary(getToken!);
+        print("response ctrl : $response");
+
+        print("response from controller : ${response.responseData}");
+
+        dataSummary.value = response.responseData!;
+      } catch (e) {
+        print('Error: $e');
+      } finally {
+        isLoading(false);
+      }
+    }
+
+    Future<void> fetchReportPerStatus(String status) async {
+      final SharedPreferences token = await SharedPreferences.getInstance();
+      try {
+        final getToken = token.getString('token');
+        isLoading(true);
+        final response = await ApiServices().getReportPerStatus(getToken!, status);
+        print("response ctrl : $response");
+
+        print("response from controller : ${response.responseData}");
+
+        listReport.value = response.responseData!;
+      } catch (e) {
+        print('Error: $e');
+      } finally {
+        isLoading(false);
+      }
+    }
+
+
+  }
+
+
 class MenuItem {
   final IconData icon;
   final String text;
