@@ -25,7 +25,7 @@ class _DetailValidationScreenState extends State<DetailValidationScreen> {
     // controller.extractFileName(controller.dataValidation.value.photoUrl!);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Detail Validation'),
+        title: Text('Detail'),
       ),
       body: SingleChildScrollView(
         child: Obx(() {
@@ -119,6 +119,7 @@ class _DetailValidationScreenState extends State<DetailValidationScreen> {
                           ],
                         ),
                       ),
+                      controller.role.value == 'SUPERVISOR' ?
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
@@ -157,7 +158,7 @@ class _DetailValidationScreenState extends State<DetailValidationScreen> {
                             ),
                           ),
                         ],
-                      ),
+                      ) : SizedBox(),
                     ],
                   ),
                 ),

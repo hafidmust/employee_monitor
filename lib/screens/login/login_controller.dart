@@ -24,6 +24,7 @@ class LoginController extends GetxController {
       final response = await ApiServices().login(username, password);
       token.value = response.responseData!.token!;
       prefs.setString("token", response.responseData!.token!);
+      prefs.setString("role", response.responseData!.user!.role!);
       // await saveToken.write(key: 'token', value: token.value);
       return response;
     } catch (e) {

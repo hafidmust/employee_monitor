@@ -46,16 +46,21 @@ class _LaporanScreenState extends State<LaporanScreen> {
                 border: Border.all(color: Colors.grey), // Outline border
                 borderRadius: BorderRadius.circular(10.0), 
               ),
-              child: ListTile(
-                title: Text(
-                  "Nama: ${report.title}",
+              child: GestureDetector(
+                onTap: (){
+                  Get.toNamed('/detail_validation/${report.id}');
+                },
+                child: ListTile(
+                  title: Text(
+                    "Nama: ${report.title}",
+                  ),
+                  subtitle: Text(
+                    "Desc : ${report.content}\nReported at: ${
+                      report.reportDate
+                    }",
+                  ),
+                  
                 ),
-                subtitle: Text(
-                  "Desc : ${report.content}\nReported at: ${
-                    report.reportDate
-                  }",
-                ),
-                
               ),
             );
                 }),

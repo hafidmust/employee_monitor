@@ -39,6 +39,9 @@ class _DetailHomeScreenState extends State<DetailHomeScreen> {
                   subtitle: Text(
                     "Desc : ${report.content}\nReported at: ${report.reportDate}",
                   ),
+                  trailing: IconButton(onPressed: (){
+                    Get.toNamed('/detail_validation/${report.id}');
+                  }, icon: Icon(Icons.keyboard_arrow_right)),
                 ),
               );
             }),

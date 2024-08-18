@@ -11,10 +11,20 @@ class DetailValidationController extends GetxController {
   var dataValidation = ResponseData().obs;
   var message = ''.obs;
   var fileName = ''.obs;
+  var role = ''.obs;
 
   @override
   void onInit() {
     super.onInit();
+    getRoles();
+  }
+  Future<void>getRoles() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.getString('role') != null) {
+      role.value = prefs.getString('role')!;
+    } else {
+      role.value = '';
+    }
   }
   Future<String> getToken() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
