@@ -1,6 +1,7 @@
 import 'package:employee_monitor/screens/home/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class DetailHomeScreen extends StatefulWidget {
   const DetailHomeScreen({super.key});
@@ -37,7 +38,9 @@ class _DetailHomeScreenState extends State<DetailHomeScreen> {
                     "Nama: ${report.title}",
                   ),
                   subtitle: Text(
-                    "Desc : ${report.content}\nReported at: ${report.reportDate}",
+                    "Desc : ${report.content}\nReported at: ${
+                      report.reportDate != null ? DateFormat('dd MMMM yyyy', 'id').format(DateTime.parse(report.reportDate!)) : '-'
+                    }",
                   ),
                   trailing: IconButton(onPressed: (){
                     Get.toNamed('/detail_validation/${report.id}');

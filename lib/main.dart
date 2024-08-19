@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   // DependencyInjection.init();
@@ -31,6 +32,12 @@ class _MainAppState extends State<MainApp> {
   @override
   Widget build(BuildContext context) {
     return  GetMaterialApp(
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale('id', 'ID'),
+      ],
       initialRoute: '/login',
       // routes: {
       //   '/login': (context) => LoginScreen(),

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:employee_monitor/screens/add_laporan/add_laporan_controller.dart';
 import 'package:employee_monitor/widget/custom_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -151,7 +152,7 @@ class _AddLaporanScreenState extends State<AddLaporanScreen> {
                           final request = await controller.addLaporan(
                               titleController.text,
                               contentController.text,
-                              _selectedDate.toString());
+                              _selectedDate?.toUtc().toString() ?? '');
                           if (request) {
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                 content: Text('Berhasil menambahkan laporan')));
@@ -173,6 +174,7 @@ class _AddLaporanScreenState extends State<AddLaporanScreen> {
     final DateTime? picked = await showDatePicker(
         helpText: 'Silahkan pilih tanggal',
         context: context,
+        locale: Locale('id', 'ID'),
         firstDate: DateTime(2020),
         lastDate: DateTime(2030));
     if (picked != null) {

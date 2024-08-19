@@ -40,7 +40,7 @@ class DetailValidationController extends GetxController {
       final token = await getToken();	
       final response = await ApiServices().getDetailValidation(token,id);
       print("response from controller : ${response.responseData}");
-      fileName.value = response.responseData!.photoUrl!.split('\\').last;
+      fileName.value = response.responseData!.photoUrl!;
       dataValidation.value = response.responseData!;
     }catch(e){
       print('Error: $e');

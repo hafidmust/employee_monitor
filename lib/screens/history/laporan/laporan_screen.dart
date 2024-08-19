@@ -56,7 +56,7 @@ class _LaporanScreenState extends State<LaporanScreen> {
                   ),
                   subtitle: Text(
                     "Desc : ${report.content}\nReported at: ${
-                      report.reportDate
+                      report.reportDate != null ? DateFormat('dd MMMM yyyy').format(DateTime.parse(report.reportDate!)) : '-'
                     }",
                   ),
                   

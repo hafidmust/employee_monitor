@@ -4,6 +4,7 @@ import 'package:employee_monitor/utils/colors.dart';
 import 'package:employee_monitor/widget/custom_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 class DetailValidationScreen extends StatefulWidget {
@@ -46,7 +47,7 @@ class _DetailValidationScreenState extends State<DetailValidationScreen> {
            Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              controller.fileName.value.isNotEmpty
+              controller.dataValidation.value.photoUrl != null
                   ? Container(
                       height: 200,
                       width: double.infinity,
@@ -82,19 +83,19 @@ class _DetailValidationScreenState extends State<DetailValidationScreen> {
                           children: [
                             Text('Title : '),
                             Text(
-                              "${controller.dataValidation.value.title}",
+                              controller.dataValidation.value.title ?? '-',
                               style: TextStyle(
                                   fontSize: 24, fontWeight: FontWeight.bold),
                             ),
                             Text("Detail : "),
                             Text(
-                              "${controller.dataValidation.value.content}",
+                              "${controller.dataValidation.value.content ?? '-'}",
                               style: TextStyle(
                                   fontSize: 18, fontWeight: FontWeight.bold),
                             ),
                             Text("Report Date : "),
                             Text(
-                              "${controller.dataValidation.value.reportDate}",
+                              "${DateFormat('dd MMMM yyyy', 'id').format(DateTime.parse(controller.dataValidation.value.reportDate!)) ?? '-'}",
                               style: TextStyle(
                                   fontSize: 18, fontWeight: FontWeight.bold),
                             ),
@@ -109,7 +110,7 @@ class _DetailValidationScreenState extends State<DetailValidationScreen> {
                                 Chip(
                                   side: BorderSide(color: Colors.white),
                                   label: Text(
-                                    "${controller.dataValidation.value.status}",
+                                    controller.dataValidation.value.status ?? '-',
                                     style: TextStyle(color: Colors.white),
                                   ),
                                   backgroundColor: getBackgroundColor(controller.dataValidation.value.status!),
