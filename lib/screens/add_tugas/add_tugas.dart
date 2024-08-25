@@ -49,6 +49,7 @@ class _AddTugasScreenState extends State<AddTugasScreen> {
               if(controller.isLoading.value){
                 return CircularProgressIndicator();
               }
+              
               return DropdownButtonFormField2(
               decoration: InputDecoration(
                 border: OutlineInputBorder(
@@ -73,14 +74,15 @@ class _AddTugasScreenState extends State<AddTugasScreen> {
                     });
                 },
               );
-            }),
+            },
+            ),
             Text('Deskripsi :'),
             CustomTextField(hintText: 'Deskripsi', controller: descController,),
             SizedBox(height: 16.0),
-            Text('Tanggal :'),
+            Text('Waktu :'),
             CustomTextField(
                   readOnly: true,
-                  hintText: _selectedDate == null ? 'Pilih tanggal' :'${_selectedDate!.toLocal()}'.split(' ')[0],
+                  hintText: _selectedDate == null ? 'Pilih tanggal' :'${_selectedDate!.toLocal()}',
                   suffixIcon: IconButton(
                     icon: Icon(Icons.date_range),
                     onPressed: () {
@@ -89,13 +91,12 @@ class _AddTugasScreenState extends State<AddTugasScreen> {
                   ),
                 ),
             SizedBox(height: 16.0),
-            
               ElevatedButton(
                 onPressed: ()async{
                   final req = await controller.addTask(
                     _selectedItem!.id!,
                     descController.text,
-                    _selectedDate.toString()
+                    _selectedDate!.toIso8601String()
                   );
                   if(req){
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Berhasil menambahkan tugas')));
@@ -110,12 +111,30 @@ class _AddTugasScreenState extends State<AddTugasScreen> {
     );
   }
   Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(helpText:'Silahkan pilih tanggal', context: context, firstDate: DateTime(2020), lastDate: DateTime(2030));
-    if(picked != null){
-      setState(() {
-        print(picked);
-        _selectedDate = picked;
-      });
+    final DateTime? picked = await showDatePicker(
+      helpText: 'Silahkan pilih tanggal',
+      context: context,
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2030),
+    );
+    if (picked != null) {
+      final TimeOfDay? pickedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+      );
+      if (pickedTime != null) {
+        setState(() {
+          
+          _selectedDate = DateTime(
+            picked.year,
+            picked.month,
+            picked.day,
+            pickedTime.hour,
+            pickedTime.minute,
+          );
+          print("selected date : $_selectedDate");
+        });
+      }
     }
   }
 }

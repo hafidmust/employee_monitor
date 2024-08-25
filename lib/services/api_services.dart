@@ -19,8 +19,8 @@ class ApiServices {
         // sendTimeout: Duration(seconds: 10),
         ),
   );
-  final String BASE_URL = 'http://103.196.153.52';
-  // final String BASE_URL = 'http://10.0.2.2:8080';
+  // final String BASE_URL = 'http://103.196.153.52';
+  final String BASE_URL = 'http://10.0.2.2:8080';
 
   Future<Login> login(String username, String password) async {
     Login? dataLogin;
@@ -174,8 +174,9 @@ class ApiServices {
       } else {
         throw Exception('Gagal create task: ${response.statusCode}');
       }
-    } on DioException catch (e) {
-      throw Exception('Create task failed: $e');
+    }on DioException catch (e) {
+      
+      throw Exception(e.response!.data['error']);
     }
   }
 

@@ -17,6 +17,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   // DependencyInjection.init();
+  // WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  // FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   runApp(const MainApp());
 }
 

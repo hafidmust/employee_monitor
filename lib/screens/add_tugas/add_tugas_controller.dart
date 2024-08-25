@@ -1,4 +1,5 @@
 
+import 'package:dio/dio.dart';
 import 'package:employee_monitor/models/list_staff.dart';
 import 'package:employee_monitor/services/api_services.dart';
 import 'package:employee_monitor/utils/secure_storage.dart';
@@ -10,6 +11,7 @@ class AddTugasController extends GetxController {
   var isLoading = false.obs;
   var dataStaff = <ResponseData>[].obs;
   var isSuccessful = false.obs;
+  var errorMessages = ''.obs;
   
 
 
@@ -54,8 +56,27 @@ class AddTugasController extends GetxController {
         isSuccessful(true);
       }
       return true;
-    } catch (e) {
+    } on DioException catch (e) {
+      print('error daro controller: $e');
+      Get.showSnackbar(
+        GetSnackBar(
+          title: 'Error',
+          message: e.response!.data['message'],
+          duration: Duration(seconds: 3),
+        ),
+        
+      );
+      return false;
+    } 
+    catch (e) {
       print(e);
+      Get.showSnackbar(
+        GetSnackBar(
+          title: 'Error',
+          message: e.toString(),
+          duration: Duration(seconds: 3),
+        ),
+      );
       return false;
     } finally {
       isLoading(false);
